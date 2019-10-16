@@ -92,7 +92,7 @@ MonoBehaviour:
   - name: "\u9AD8\u77E5"
     sprite: {fileID: 21300000, guid: 6c94b707a1ae04c85883f4234635a8a8, type: 3}
   - name: "\u798F\u5CA1"
-    sprite: {fileID: 0}
+    sprite: {fileID: 21300000, guid: 4aaee5442817e44c8885ef1f85bee9a5, type: 3}
   - name: "\u4F50\u8CC0"
     sprite: {fileID: 21300000, guid: 67a1e5c2a42304954b703b4152b7e475, type: 3}
   - name: "\u9577\u5D0E"
