@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class InGameScene : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class InGameScene : MonoBehaviour
         Shuffle(indexes);
 
         var rightIndex = 40;
-        titleText.text = $"<color='blue'>{prefectures.Get(rightIndex).name}</color>をさがせ";
+        titleText.text = $"<color='blue'>{prefectures.Get(rightIndex).name}</color>をさがせ！";
 
         var i = 0;
         foreach (var item in prefectureItems)
@@ -53,17 +54,30 @@ public class InGameScene : MonoBehaviour
 
     private async Task OnRight()
     {
-        if (touchDefense == null)
-        {
-            var prefab = Resources.Load<GameObject>("Prefabs/TouchDefense");
-            touchDefense = Instantiate(prefab, canvas.transform);
-        }
+        ShowTouchDefense();
 
         await Task.Delay(1000);
 
-        Destroy(touchDefense.gameObject);
-        touchDefense = null;
+        noneItem.ClearStatus();
+        foreach (var item in prefectureItems)
+        {
+            item.ClearStatus();
+            item.transform.DOLocalMove(Vector3.zero, 0.5f);
+        }
+
+        await Task.Delay(500);
         StartGame();
+
+        var i = 0;
+        foreach (var item in prefectureItems)
+        {
+            item.transform.DOLocalMove(GetItemLocalPosition(i), 0.5f);
+            i++;
+        }
+
+        await Task.Delay(500);
+
+        CloseTouchDefense();
     }
 
     private void Shuffle(List<int> list)
@@ -105,4 +119,21 @@ public class InGameScene : MonoBehaviour
         localPosition.y = -(index / 5 - 2) * 450;
         return localPosition;
     }
+
+    private void ShowTouchDefense()
+    {
+        if (touchDefense == null)
+        {
+            var prefab = Resources.Load<GameObject>("Prefabs/TouchDefense");
+            touchDefense = Instantiate(prefab, canvas.transform);
+        }
+    }
+
+    private void CloseTouchDefense()
+    {
+        Destroy(touchDefense.gameObject);
+        touchDefense = null;
+    }
+
+
 }
