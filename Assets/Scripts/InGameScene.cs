@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SampleScene : MonoBehaviour
+public class InGameScene : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
     [SerializeField] private Text titleText;
