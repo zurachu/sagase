@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -20,11 +19,6 @@ public class TitleScene : MonoBehaviour
 
     public void OnTapStart()
     {
-        GoNext();
-    }
-
-    public async Task GoNext()
-    {
         var prefab = Resources.Load<GameObject>("Prefabs/TouchDefense");
         Instantiate(prefab, canvas.transform);
 
@@ -32,12 +26,13 @@ public class TitleScene : MonoBehaviour
         {
             prefecture.transform.DOLocalMove(Vector3.zero, 0.5f);
             prefecture.transform.DOScale(Vector3.one, 0.5f);
-        }
+        }   
 
         sagaColorTweener.Kill();
-        saga.DOColor(new Color(0f, 0.75f, 0f), 0.25f);
-
-        await Task.Delay(500);
-        SceneManager.LoadScene("InGameScene");
+        var sequence = DOTween.Sequence();
+        sequence.Append(saga.DOColor(new Color(0f, 0.75f, 0f), 0.25f));
+        sequence.AppendInterval(0.25f);
+        sequence.AppendCallback(() => { SceneManager.LoadScene("InGameScene"); });
+        sequence.Play();
     }
 }

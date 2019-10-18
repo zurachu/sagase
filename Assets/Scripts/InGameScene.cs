@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -15,7 +14,7 @@ public class InGameScene : MonoBehaviour
     private NoneItem noneItem;
     private GameObject touchDefense;
     private List<int> indexes;
-
+ 
     void Start()
     {
         indexes = Enumerable.Range(0, prefectures.Count).ToList();
@@ -26,7 +25,7 @@ public class InGameScene : MonoBehaviour
         StartGame();
     }
 
-    private async Task StartGame()
+    private void StartGame()
     {
         ShowTouchDefense();
         noneItem.gameObject.SetActive(false);
@@ -46,11 +45,14 @@ public class InGameScene : MonoBehaviour
         }
 
         noneItem.Initialize(indexes.FindIndex(_x => _x == rightIndex) >= prefectureItems.Count, OnTap);
-        noneItem.gameObject.SetActive(true);
 
-        await MovePrefectureItemToPosition();
-
-        CloseTouchDefense();
+        MovePrefectureItemToPosition();
+        var sequence = DOTween.Sequence()
+            .AppendInterval(0.5f)
+            .AppendCallback(() => {
+                noneItem.gameObject.SetActive(true);
+                CloseTouchDefense();
+            });
     }
 
     private void OnTap(bool isRight)
@@ -61,23 +63,25 @@ public class InGameScene : MonoBehaviour
         }
     }
 
-    private async Task OnRight()
+    private void OnRight()
     {
         ShowTouchDefense();
 
-        await Task.Delay(1000);
+        var sequence = DOTween.Sequence()
+            .AppendInterval(1f)
+            .AppendCallback(() =>
+            {
+                foreach (var item in prefectureItems)
+                {
+                    item.ClearStatus();
+                    item.transform.DOLocalMove(Vector3.zero, 0.5f);
+                }
 
-        foreach (var item in prefectureItems)
-        {
-            item.ClearStatus();
-            item.transform.DOLocalMove(Vector3.zero, 0.5f);
-        }
-
-        noneItem.gameObject.SetActive(false);
-        noneItem.ClearStatus();
-
-        await Task.Delay(500);
-        await StartGame();
+                noneItem.gameObject.SetActive(false);
+                noneItem.ClearStatus();
+            })
+            .AppendInterval(0.5f)
+            .AppendCallback(StartGame);
     }
 
     private void Shuffle(List<int> list)
@@ -120,7 +124,7 @@ public class InGameScene : MonoBehaviour
         return localPosition;
     }
 
-    private async Task MovePrefectureItemToPosition()
+    private void MovePrefectureItemToPosition()
     {
         var i = 0;
         foreach (var item in prefectureItems)
@@ -128,18 +132,14 @@ public class InGameScene : MonoBehaviour
             item.transform.DOLocalMove(GetItemLocalPosition(i), 0.5f);
             i++;
         }
-
-        await Task.Delay(500);
     }
 
-    private async Task MovePrefectureItemToOrigin()
+    private void MovePrefectureItemToOrigin()
     {
         foreach (var item in prefectureItems)
         {
             item.transform.DOLocalMove(Vector3.zero, 0.5f);
         }
-
-        await Task.Delay(500);
     }
 
     private void ShowTouchDefense()
