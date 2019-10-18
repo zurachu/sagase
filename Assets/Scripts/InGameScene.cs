@@ -22,11 +22,15 @@ public class InGameScene : MonoBehaviour
 
         CreatePrefectureItems();
         CreateNoneItem();
+        ShowTouchDefense();
         StartGame();
     }
 
-    private void StartGame()
+    private async Task StartGame()
     {
+        ShowTouchDefense();
+        noneItem.gameObject.SetActive(false);
+
         Shuffle(indexes);
 
         var rightIndex = 40;
@@ -42,6 +46,11 @@ public class InGameScene : MonoBehaviour
         }
 
         noneItem.Initialize(indexes.FindIndex(_x => _x == rightIndex) >= prefectureItems.Count, OnTap);
+        noneItem.gameObject.SetActive(true);
+
+        await MovePrefectureItemToPosition();
+
+        CloseTouchDefense();
     }
 
     private void OnTap(bool isRight)
@@ -58,26 +67,17 @@ public class InGameScene : MonoBehaviour
 
         await Task.Delay(1000);
 
-        noneItem.ClearStatus();
         foreach (var item in prefectureItems)
         {
             item.ClearStatus();
             item.transform.DOLocalMove(Vector3.zero, 0.5f);
         }
 
-        await Task.Delay(500);
-        StartGame();
-
-        var i = 0;
-        foreach (var item in prefectureItems)
-        {
-            item.transform.DOLocalMove(GetItemLocalPosition(i), 0.5f);
-            i++;
-        }
+        noneItem.gameObject.SetActive(false);
+        noneItem.ClearStatus();
 
         await Task.Delay(500);
-
-        CloseTouchDefense();
+        await StartGame();
     }
 
     private void Shuffle(List<int> list)
@@ -99,7 +99,7 @@ public class InGameScene : MonoBehaviour
         for (var i = 0; i < 24; i++)
         {
             var item = Instantiate(prefab, canvas.transform);
-            item.transform.localPosition = GetItemLocalPosition(i);
+            item.transform.localPosition = Vector3.zero;
             prefectureItems.Add(item);
         }
     }
@@ -118,6 +118,28 @@ public class InGameScene : MonoBehaviour
         localPosition.x = (index % 5 - 2) * 450;
         localPosition.y = -(index / 5 - 2) * 450;
         return localPosition;
+    }
+
+    private async Task MovePrefectureItemToPosition()
+    {
+        var i = 0;
+        foreach (var item in prefectureItems)
+        {
+            item.transform.DOLocalMove(GetItemLocalPosition(i), 0.5f);
+            i++;
+        }
+
+        await Task.Delay(500);
+    }
+
+    private async Task MovePrefectureItemToOrigin()
+    {
+        foreach (var item in prefectureItems)
+        {
+            item.transform.DOLocalMove(Vector3.zero, 0.5f);
+        }
+
+        await Task.Delay(500);
     }
 
     private void ShowTouchDefense()
