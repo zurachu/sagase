@@ -8,15 +8,21 @@ public class InGameScene : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
     [SerializeField] private Text titleText;
+    [SerializeField] private Text gameCountText;
     [SerializeField] private ScoreDisplay scoreDisplay;
     [SerializeField] private Prefectures prefectures;
+
+    private static readonly int TotalGameCount = 10;
+    private static readonly float MaxTimeForBonus = 10f;
 
     private List<PrefectureItem> prefectureItems;
     private NoneItem noneItem;
     private GameObject touchDefense;
     private List<int> indexes;
+    private int gameCount;
+    private float timeForBonus;
  
-    void Start()
+    private void Start()
     {
         indexes = Enumerable.Range(0, prefectures.Count).ToList();
 
@@ -24,6 +30,11 @@ public class InGameScene : MonoBehaviour
         CreateNoneItem();
         ShowTouchDefense();
         StartGame();
+    }
+
+    private void Update()
+    {
+        timeForBonus -= Time.deltaTime;
     }
 
     private void StartGame()
@@ -35,6 +46,8 @@ public class InGameScene : MonoBehaviour
 
         var rightIndex = 40;
         titleText.text = $"<color='blue'>{prefectures.Get(rightIndex).name}</color>をさがせ！";
+        gameCount++;
+        gameCountText.text = $"{gameCount}/{TotalGameCount}";
 
         var i = 0;
         foreach (var item in prefectureItems)
@@ -53,6 +66,7 @@ public class InGameScene : MonoBehaviour
             .AppendCallback(() => {
                 noneItem.gameObject.SetActive(true);
                 CloseTouchDefense();
+                timeForBonus = MaxTimeForBonus;
             })
             .Play();
     }
@@ -73,29 +87,37 @@ public class InGameScene : MonoBehaviour
     {
         ShowTouchDefense();
 
-        scoreDisplay.Score += 100;
+        var score = Mathf.Max((int)(timeForBonus * 100), 100);
+        scoreDisplay.Score += score;
 
-        DOTween.Sequence()
-            .AppendInterval(1f)
-            .AppendCallback(() =>
-            {
-                foreach (var item in prefectureItems)
+        if (gameCount >= TotalGameCount)
+        {
+
+        }
+        else
+        {
+            DOTween.Sequence()
+                .AppendInterval(1f)
+                .AppendCallback(() =>
                 {
-                    item.ClearStatus();
-                    item.transform.DOLocalMove(Vector3.zero, 0.5f);
-                }
+                    foreach (var item in prefectureItems)
+                    {
+                        item.ClearStatus();
+                        item.transform.DOLocalMove(Vector3.zero, 0.5f);
+                    }
 
-                noneItem.gameObject.SetActive(false);
-                noneItem.ClearStatus();
-            })
-            .AppendInterval(0.5f)
-            .AppendCallback(StartGame)
-            .Play();
+                    noneItem.gameObject.SetActive(false);
+                    noneItem.ClearStatus();
+                })
+                .AppendInterval(0.5f)
+                .AppendCallback(StartGame)
+                .Play();
+        }
     }
 
     private void OnMiss()
     {
-        scoreDisplay.Score -= 10;
+        scoreDisplay.Score -= 50;
     }
 
     private void Shuffle(List<int> list)
