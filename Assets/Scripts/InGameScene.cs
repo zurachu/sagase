@@ -169,14 +169,6 @@ public class InGameScene : MonoBehaviour
         }
     }
 
-    private void MovePrefectureItemToOrigin()
-    {
-        foreach (var item in prefectureItems)
-        {
-            item.transform.DOLocalMove(Vector3.zero, 0.5f);
-        }
-    }
-
     private void ShowTouchDefense()
     {
         if (touchDefense == null)
