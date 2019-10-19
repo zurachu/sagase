@@ -13,7 +13,7 @@ public class ScoreDisplayPopUp : MonoBehaviour
 
         var sequence = DOTween.Sequence()
             .Append(scoreText.transform.DOLocalMove(new Vector3(0f, 200f, 0f), 0.5f))
-            .Join(scoreText.DOFade(0f, 0.5f))
+            .Append(scoreText.DOFade(0f, 0.5f))
             .AppendCallback(() =>
             {
                 Destroy(gameObject);
