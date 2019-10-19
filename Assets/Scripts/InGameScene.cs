@@ -10,6 +10,7 @@ public class InGameScene : MonoBehaviour
     [SerializeField] private Text titleText;
     [SerializeField] private Text gameCountText;
     [SerializeField] private ScoreDisplay scoreDisplay;
+    [SerializeField] AudioSource audioSource;
     [SerializeField] private Prefectures prefectures;
 
     private static readonly int TotalGameCount = 10;
@@ -22,9 +23,17 @@ public class InGameScene : MonoBehaviour
     private Prefectures.Prefecture rightPrefecture;
     private int gameCount;
     private float timeForBonus;
- 
+
+    AudioClip rightAudio;
+    AudioClip missAudio;
+
     private void Start()
     {
+        rightAudio = Resources.Load<AudioClip>("Audio/right2");
+        missAudio = Resources.Load<AudioClip>("Audio/mistake");
+        audioSource.clip = Resources.Load<AudioClip>("Audio/thinkingtime4");
+        audioSource.Play();
+
         indexes = Enumerable.Range(0, prefectures.Count).ToList();
 
         CreatePrefectureItems();
@@ -92,6 +101,8 @@ public class InGameScene : MonoBehaviour
         var score = Mathf.Max((int)(timeForBonus * 100), 100);
         scoreDisplay.Score += score;
 
+        audioSource.PlayOneShot(rightAudio);
+
         if (gameCount >= TotalGameCount)
         {
             DOTween.Sequence()
@@ -102,6 +113,7 @@ public class InGameScene : MonoBehaviour
                     var resultView = Instantiate(prefab, canvas.transform);
                     resultView.Initialize(rightPrefecture, scoreDisplay.Score);
                 })
+                .Append(audioSource.DOFade(0f, 1f))
                 .Play();
         }
         else
@@ -128,6 +140,8 @@ public class InGameScene : MonoBehaviour
     private void OnMiss()
     {
         scoreDisplay.Score -= 100;
+
+        audioSource.PlayOneShot(missAudio);
     }
 
     private void Shuffle(List<int> list)
