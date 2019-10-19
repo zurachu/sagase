@@ -8,6 +8,7 @@ public class InGameScene : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
     [SerializeField] private Text titleText;
+    [SerializeField] private ScoreDisplay scoreDisplay;
     [SerializeField] private Prefectures prefectures;
 
     private List<PrefectureItem> prefectureItems;
@@ -47,12 +48,13 @@ public class InGameScene : MonoBehaviour
         noneItem.Initialize(indexes.FindIndex(_x => _x == rightIndex) >= prefectureItems.Count, OnTap);
 
         MovePrefectureItemToPosition();
-        var sequence = DOTween.Sequence()
+        DOTween.Sequence()
             .AppendInterval(0.5f)
             .AppendCallback(() => {
                 noneItem.gameObject.SetActive(true);
                 CloseTouchDefense();
-            });
+            })
+            .Play();
     }
 
     private void OnTap(bool isRight)
@@ -61,13 +63,19 @@ public class InGameScene : MonoBehaviour
         {
             OnRight();
         }
+        else
+        {
+            OnMiss();
+        }
     }
 
     private void OnRight()
     {
         ShowTouchDefense();
 
-        var sequence = DOTween.Sequence()
+        scoreDisplay.Score += 100;
+
+        DOTween.Sequence()
             .AppendInterval(1f)
             .AppendCallback(() =>
             {
@@ -81,7 +89,13 @@ public class InGameScene : MonoBehaviour
                 noneItem.ClearStatus();
             })
             .AppendInterval(0.5f)
-            .AppendCallback(StartGame);
+            .AppendCallback(StartGame)
+            .Play();
+    }
+
+    private void OnMiss()
+    {
+        scoreDisplay.Score -= 10;
     }
 
     private void Shuffle(List<int> list)
@@ -112,7 +126,6 @@ public class InGameScene : MonoBehaviour
     {
         var prefab = Resources.Load<NoneItem>("Prefabs/NoneItem");
         noneItem = Instantiate(prefab, canvas.transform);
-        var localPosition = Vector3.zero;
         noneItem.transform.localPosition = GetItemLocalPosition(24);
     }
 

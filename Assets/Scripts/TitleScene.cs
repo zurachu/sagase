@@ -29,10 +29,10 @@ public class TitleScene : MonoBehaviour
         }   
 
         sagaColorTweener.Kill();
-        var sequence = DOTween.Sequence();
-        sequence.Append(saga.DOColor(new Color(0f, 0.75f, 0f), 0.25f));
-        sequence.AppendInterval(0.25f);
-        sequence.AppendCallback(() => { SceneManager.LoadScene("InGameScene"); });
-        sequence.Play();
+        var sequence = DOTween.Sequence()
+            .Append(saga.DOColor(new Color(0f, 0.75f, 0f), 0.25f))
+            .AppendInterval(0.25f)
+            .AppendCallback(() => { SceneManager.LoadScene("InGameScene"); })
+            .Play();
     }
 }
