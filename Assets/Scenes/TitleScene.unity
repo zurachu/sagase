@@ -322,6 +322,7 @@ MonoBehaviour:
   - {fileID: 1848804817}
   - {fileID: 559882114}
   saga: {fileID: 559882114}
+  tapStart: {fileID: 1085872375}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -569,8 +570,9 @@ GameObject:
   - component: {fileID: 1085872372}
   - component: {fileID: 1085872374}
   - component: {fileID: 1085872373}
+  - component: {fileID: 1085872375}
   m_Layer: 5
-  m_Name: Text - Press Start
+  m_Name: Text - Tap Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -628,7 +630,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Press <color="blue">SAGA</color> to Start
+  m_Text: Tap <color="blue">SAGA</color> to Start
 --- !u!222 &1085872374
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -637,6 +639,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1085872371}
   m_CullTransparentMesh: 0
+--- !u!225 &1085872375
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085872371}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1192809972
 GameObject:
   m_ObjectHideFlags: 0
