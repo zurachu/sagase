@@ -13,7 +13,7 @@ public class InGameScene : MonoBehaviour
     [SerializeField] private Prefectures prefectures;
 
     private static readonly int TotalGameCount = 10;
-    private static readonly float MaxTimeForBonus = 10f;
+    private static readonly float MaxTimeForBonus = 5f;
 
     private List<PrefectureItem> prefectureItems;
     private NoneItem noneItem;
@@ -127,7 +127,7 @@ public class InGameScene : MonoBehaviour
 
     private void OnMiss()
     {
-        scoreDisplay.Score -= 50;
+        scoreDisplay.Score -= 100;
     }
 
     private void Shuffle(List<int> list)
