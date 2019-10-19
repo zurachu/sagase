@@ -19,6 +19,7 @@ public class InGameScene : MonoBehaviour
     private NoneItem noneItem;
     private GameObject touchDefense;
     private List<int> indexes;
+    private Prefectures.Prefecture rightPrefecture;
     private int gameCount;
     private float timeForBonus;
  
@@ -45,7 +46,8 @@ public class InGameScene : MonoBehaviour
         Shuffle(indexes);
 
         var rightIndex = 40;
-        titleText.text = $"<color='blue'>{prefectures.Get(rightIndex).name}</color>をさがせ！";
+        rightPrefecture = prefectures.Get(rightIndex);
+        titleText.text = $"<color='blue'>{rightPrefecture.name}</color>をさがせ！";
         gameCount++;
         gameCountText.text = $"{gameCount}/{TotalGameCount}";
 
@@ -92,7 +94,15 @@ public class InGameScene : MonoBehaviour
 
         if (gameCount >= TotalGameCount)
         {
-
+            DOTween.Sequence()
+                .AppendInterval(1f)
+                .AppendCallback(() =>
+                {
+                    var prefab = Resources.Load<ResultView>("Prefabs/ResultView");
+                    var resultView = Instantiate(prefab, canvas.transform);
+                    resultView.Initialize(rightPrefecture, scoreDisplay.Score);
+                })
+                .Play();
         }
         else
         {
